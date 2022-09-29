@@ -1,0 +1,93 @@
+# Search through appointments on a given day
+# return the best order of appointments to go in
+from itertools import permutations
+from collections import OrderedDict
+
+def setupApps():    #test database
+    Aapp1 = [1, 2, False]   # [start time, end time, booked] booked = false means its open 
+    Aapp2 = [2, 3, False]
+    Aapp3 = [3, 4, False]
+    Aapp4 = [4, 5, False]
+    Aapp5 = [5, 6, False]
+    A = [Aapp1, Aapp2, Aapp3, Aapp4, Aapp5] #list of appointments
+
+    Bapp1 = [1, 2, False] 
+    Bapp2 = [2, 3, True]
+    Bapp3 = [3, 4, False]
+    Bapp4 = [4, 5, False]
+    Bapp5 = [5, 6, False]
+    B = [Bapp1, Bapp2, Bapp3, Bapp4, Bapp5]
+
+    Capp1 = [1, 2, False] 
+    Capp2 = [2, 3, False]
+    Capp3 = [3, 4, False]
+    Capp4 = [4, 5, False]
+    Capp5 = [5, 6, False]
+    C = [Capp1, Capp2, Capp3, Capp4, Capp5]
+    allApps = { #dictionary with the key being the appointment name, and the value being the list of appointmetns
+        "A" : A,
+        "B" : B,
+        "C" : C,
+    }
+    return allApps
+
+
+# search function given all the appointments, the buisneses needed, the start time, and current route
+# this is based off an AI Project I did
+# I realised after I was mostly done It can be simplified much more
+# I will simplify it later down the road when we are sure this is what we want
+# Originaly I was using a breadth first search but since there wont be that many appoinments
+# Exhaustive seaching through every possibility is viable
+def nextApt(allApps, needed, starttime, route):
+
+    newRoute = route
+    queue = []
+    for biz in needed:
+        if biz not in route.keys():
+            queue.append(biz[0])
+
+
+    while len(queue) != 0:
+        
+        currentBiz = queue.pop(0)
+
+        for app in allApps.get(currentBiz):
+            if ((app[0] >= starttime) and (app[2] == False)):
+                newRoute[currentBiz] = app[0]
+                nextApt(allApps, needed, app[1], newRoute)
+                break
+
+        if (len(route) == len(needed)):
+            return route
+        
+
+
+
+
+def main():
+    
+    route = OrderedDict() #using an ordered dictionary for the route
+    best_route = OrderedDict() # best route to take
+    allApps = setupApps() # gets the dict for each buisness
+    bestEnd = 10000     #high best end time so it only gets smaller, should be after appointmets stop
+
+    #inputs from user
+    needs = ["A", "B", "C"] #order does not matter, we will search through all possible permutations
+    endtime = 0 
+    
+    allLists = permutations(needs)  # finds all possible combinations of appointment orders
+    for order in list(allLists):
+        nextApt(allApps, order, 0, route)
+        endtime = list(route.values())[-1]
+        if(endtime < bestEnd):
+            best_route = route
+            bestEnd = endtime
+
+
+        route = {}
+
+    print(best_route)
+
+
+if __name__ == "__main__":
+    main()

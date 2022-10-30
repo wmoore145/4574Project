@@ -64,8 +64,8 @@ def nextApt(allApps, needed, starttime, route):
 
 
 
-def main():
-    
+def search(biz):
+    print("Entered succesful")
     route = OrderedDict() #using an ordered dictionary for the route
     best_route = OrderedDict() # best route to take
     allApps = setupApps() # gets the dict for each buisness
@@ -87,7 +87,7 @@ def main():
         route = {}
 
     print(best_route)
+    #converts the ordered dictionary to a string
+    return str(best_route)
 
 
-if __name__ == "__main__":
-    main()

@@ -3,6 +3,19 @@
 from itertools import permutations
 from collections import OrderedDict
 
+def getBusiness():
+    business_names = []
+    #get the names of all the businesses 
+    #just return a list of all the businesses names
+    return business_names
+
+def getApps():
+    
+    #gets the appointments from the server
+    #return a dictionary of all the appointments
+    #see setupApps for the format it should return
+    return {}
+
 def setupApps():    #test database
     Aapp1 = [1, 2, False]   # [start time, end time, booked] booked = false means its open 
     Aapp2 = [2, 3, False]
@@ -71,11 +84,10 @@ def search(biz):
     allApps = setupApps() # gets the dict for each buisness
     bestEnd = 10000     #high best end time so it only gets smaller, should be after appointmets stop
 
-    #inputs from user
-    needs = ["A", "B", "C"] #order does not matter, we will search through all possible permutations
+
     endtime = 0 
     
-    allLists = permutations(needs)  # finds all possible combinations of appointment orders
+    allLists = permutations(biz)  # finds all possible combinations of appointment orders
     for order in list(allLists):
         nextApt(allApps, order, 0, route)
         endtime = list(route.values())[-1]

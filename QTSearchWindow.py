@@ -3,7 +3,7 @@ import random
 import sys
 import appSearch
 
-from PyQt6.QtWidgets import (QApplication, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QMessageBox, QWidget)
+from PyQt6.QtWidgets import (QApplication, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QMessageBox, QWidget, QComboBox)
 
    
 
@@ -53,6 +53,20 @@ class SearchWidget(QWidget):    #Search Window
         fullMessage = message + bizneeded
         messageBox.setText(fullMessage)     
 
+    def BizAdd(self):
+
+        currentBiz = self.BusinessBox.currentText()
+
+        if currentBiz not in biz:
+            biz.append(currentBiz)
+        else:
+            biz.remove(currentBiz)
+
+        bizneeded = self.concatBiz()
+        message = "Buisnesses Selected: "
+        fullMessage = message + bizneeded
+        messageBox.setText(fullMessage)     
+
     def findResult(self):
 
         #go get the result from what you need
@@ -63,7 +77,18 @@ class SearchWidget(QWidget):    #Search Window
     def __init__(self, biz, messageBox, resultBox):
         
         QWidget.__init__(self)
+
         # Instructions
+        businessList = ['A', 'B', 'C']
+        #DropBox
+        self.BusinessBox = QComboBox()
+        for name in businessList:
+            self.BusinessBox.addItem(name)
+
+        addButton = QPushButton(self)
+        addButton.setText("Add")
+        addButton.clicked.connect(self.BizAdd)
+
         helloMsg = QLabel("<h1>Select what you need.</h1>", self)
         
         #Keep updated what the user has selected
@@ -71,21 +96,6 @@ class SearchWidget(QWidget):    #Search Window
         bizneeded = self.concatBiz()
         fullMessage = message + bizneeded
         messageBox.setText(fullMessage)
-
-        #Buttons are simply for examples, we will need to do a drop down menu or something else for selection
-        #Preparing the buttons
-        button1 = QPushButton(self)
-        button1.setText("Buisness A")
-        button1.clicked.connect(self.BizA)
-
-        button2 = QPushButton(self)
-        button2.setText("Buisness B")
-        button2.clicked.connect(self.BizB)
-
-        button3 = QPushButton(self)
-        button3.setText("Buisness C")
-        button3.clicked.connect(self.BizC)
-
 
         #Button starts the search
         searchButton = QPushButton(self)
@@ -96,13 +106,14 @@ class SearchWidget(QWidget):    #Search Window
         #adding everything to the layout
         layout = QVBoxLayout()
         sublayout = QHBoxLayout()
-        sublayout.addWidget(button1)
-        sublayout.addWidget(button2)
-        sublayout.addWidget(button3)
+
         layout.addWidget(helloMsg)
         layout.addLayout(sublayout)
 
         layout.addWidget(messageBox)
+
+        layout.addWidget(self.BusinessBox)
+        layout.addWidget(addButton)
         layout.addWidget(searchButton)
         layout.addWidget(resultBox)
         self.setLayout(layout)  
@@ -119,6 +130,6 @@ if __name__ == "__main__":
     resultBox = QLabel()
     widget = SearchWidget(biz, messageBox, resultBox)
     widget.setWindowTitle("PyQt App")
-    widget.setGeometry(100,100,280,80)
+    widget.setGeometry(200,200,400,100)
 
     sys.exit(app.exec())

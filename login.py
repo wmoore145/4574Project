@@ -18,3 +18,11 @@ def register(username, password, type):
     col.insert_one({"username": username, "password": password, "type": type})
     return True
     
+
+def isBusiness(username):
+    mongo_client = MongoClient('mongodb://localhost:27017')#assuming local database
+    col = mongo_client["appointment_user_data"]["user_data"]#database user_data and collection user_data
+    query = col.find_one({"username": username, "type": "business"})
+    if query is None:
+        return False
+    return True

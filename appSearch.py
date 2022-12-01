@@ -52,16 +52,14 @@ def setupApps():    #test database
 # Originaly I was using a breadth first search but since there wont be that many appoinments
 # Exhaustive seaching through every possibility is viable
 def nextApt(allApps, needed, starttime, route):
-
     newRoute = route
     queue = []
     for biz in needed:
         if biz not in route.keys():
-            queue.append(biz[0])
-
+            queue.append(biz)
 
     while len(queue) != 0:
-        
+
         currentBiz = queue.pop(0)
 
         for app in allApps.get(currentBiz):
@@ -77,13 +75,21 @@ def nextApt(allApps, needed, starttime, route):
 
 
 
-def search(biz):
+def search(biz, col):
     print("Entered succesful")
     route = OrderedDict() #using an ordered dictionary for the route
     best_route = OrderedDict() # best route to take
-    allApps = setupApps() # gets the dict for each buisness
     bestEnd = 10000     #high best end time so it only gets smaller, should be after appointmets stop
+    allApps = {}
 
+    query = col.find({})
+    for appointment in query:
+        occupied = True
+        if appointment["apointee"] == "NONE":
+            occupied = False
+        if appointment["business"] not in allApps.keys():
+            allApps[appointment["business"]] = []
+        allApps[appointment["business"]].append([int(appointment["start_time"]), int(appointment["end_time"]), occupied])
 
     endtime = 0 
     
@@ -98,7 +104,6 @@ def search(biz):
 
         route = {}
 
-    print(best_route)
     #converts the ordered dictionary to a string
     return str(best_route)
 

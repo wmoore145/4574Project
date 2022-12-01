@@ -1,28 +1,57 @@
 
 import PyQt6
 import sys
+from pymongo import MongoClient
+from bson.objectid import ObjectId
 
 from PyQt6.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QLineEdit, QMessageBox, QStackedWidget, QListWidget, QFormLayout, QHBoxLayout, QVBoxLayout, QRadioButton, QLabel, QCheckBox
 from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import pyqtSlot
 
+
 class BusinessWindow(QWidget):
 
     def viewAll(self):
         #needs to view all of the appointments the buisness has
-        print("View button pressed")
+        query = self.col.find({"business": self.client.username_text})
+        self.appointment_window = ViewAppointments(self, query)
+        pos = self.client.Stack.addWidget (self.appointment_window)
+        self.client.Stack.setCurrentIndex(pos)#switches page to view appointments
 
     def creation(self):
         #needs to take this start and end times and create an appointment slot
-        print("StartTime", self.createStartEntry.text())
-        print("End Time", self.createEndEntry.text())
+        self.col.insert_one({"business": self.client.username_text, "start_time": self.createStartEntry.text(), "end_time": self.createEndEntry.text(), "apointee": "NONE"})
+        self.createStartEntry.clear()
+        self.createEndEntry.clear()
 
     def cancelation(self):
         #takes this start time and cancels the appointment with that start
-        print("Start to cancel", self.cancelStartEntry.text())
+        try:
+            query = self.col.find_one({'_id': ObjectId(self.cancelStartEntry.text())})
+        except:
+            self.cancelStartEntry.clear()
+            return
+        if query is None:
+            self.cancelStartEntry.clear()
+            return
+        self.col.delete_one({'_id': ObjectId(self.cancelStartEntry.text())})
+        self.cancelStartEntry.clear()
 
-    def __init__(self):
+    def endViewAll(self):
+        #when returning to this window cleans up appointmnet viewing window for next time
+        self.client.Stack.removeWidget(self.appointment_window)#removes widget to view appointments
+        self.appointment_window.deleteLater()
+        self.appointment_window = None
+
+    def loginRefresh(self):
+        self.cancelStartEntry.clear()
+
+    def __init__(self, client):
         super(BusinessWindow, self).__init__()
+        self.mongo_client = MongoClient('mongodb://localhost:27017')#assuming local database
+        self.col  = self.mongo_client["appointment_user_data"]["appointment_list"]#database user_data and collection appointment_list
+        self.client = client
+        
         self.setWindowTitle('Buisness Window')
         self.left = 10
         self.top = 10
@@ -52,7 +81,7 @@ class BusinessWindow(QWidget):
 
         ####### Setting Cancel layout
         self.cancel = QPushButton("Cancel")
-        self.cancelStart = QLabel("Start Time to Cancel")
+        self.cancelStart = QLabel("Appointment ID to Cancel")
         self.cancelStartEntry = QLineEdit()
         
         self.cancelLayout = QHBoxLayout()
@@ -61,10 +90,14 @@ class BusinessWindow(QWidget):
         self.cancelLayout.addWidget(self.cancel)
 
         ######### Set connections
-        self.viewButton = QPushButton("View Appointments")
+        self.viewButton = QPushButton("View Your Business' Appointments")
         self.viewButton.clicked.connect(self.viewAll)
         self.createButton.clicked.connect(self.creation)
         self.cancel.clicked.connect(self.cancelation)
+
+        ######### Logout Button
+        self.logoutButton = QPushButton("Logout")
+        self.logoutButton.clicked.connect(self.client.to_login)
         
        ########## Set layout for whole window
         
@@ -74,9 +107,10 @@ class BusinessWindow(QWidget):
         createDirection = QLabel("Fill in entries below and hit 'create' to create new appointment")
         self.layout.addWidget(createDirection)
         self.layout.addLayout(self.createLayout)
-        cancelDirection = QLabel("Fill in start time of appointment to be canceled")
+        cancelDirection = QLabel("Fill in ID of appointment to be canceled")
         self.layout.addWidget(cancelDirection)
         self.layout.addLayout(self.cancelLayout)
+        self.layout.addWidget(self.logoutButton)
 
         self.setLayout(self.layout)
         self.show()
@@ -87,3 +121,22 @@ if __name__ == "__main__":
     widget = BusinessWindow()
 
     sys.exit(app.exec())
+
+
+class ViewAppointments(QWidget):
+
+    def __init__(self, parent, query):
+        super(ViewAppointments, self).__init__()
+        self.layout = QVBoxLayout()
+        for appointment in query:
+            info = QLabel("Start Time: " + str(appointment["start_time"]) + "   End Time: " + str(appointment["end_time"]) + "   Apointee: " + str(appointment["apointee"]) + "   ID: " + str(appointment["_id"]))
+            info.setTextInteractionFlags(PyQt6.QtCore.Qt.TextInteractionFlag.TextSelectableByMouse)
+            self.layout.addWidget(info)        
+        
+        ######### Logout Button
+        returnButton = QPushButton("Return")
+        returnButton.clicked.connect(parent.endViewAll)
+        self.layout.addWidget(returnButton)
+
+        self.setLayout(self.layout)
+        self.show

@@ -2,6 +2,16 @@
 # return the best order of appointments to go in
 from itertools import permutations
 from collections import OrderedDict
+import json as simplejson
+import urllib
+
+def getTravelTime(origin_lat,origin_long,final_lat,final_long):
+    origin = origin_lat,origin_long
+    finaldest = final_lat,final_long
+    url = "http://maps.googleapis.com/maps/api/distancematrix/json?origins={0}&destinations={1}&mode=driving&language=en-EN&sensor=false".format(str(self.origin),str(self.finaldest))
+    result= simplejson.load(urllib.urlopen(url))
+    driving_time = result['rows'][0]['elements'][0]['duration']['value']
+    return driving_time # returns  # hours # min or #min
 
 def getBusiness():
     business_names = []

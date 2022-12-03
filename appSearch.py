@@ -105,6 +105,6 @@ def search(biz, col):
         route = {}
 
     #converts the ordered dictionary to a string
-    return str(best_route)
+    return best_route
 
 

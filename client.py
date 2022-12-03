@@ -131,7 +131,7 @@ class App(QWidget):
     def register_click(self):
         username = self.rusername.text()
         password = self.rpassword.text()
-        business = self.business_option
+        business = self.business_option.isChecked()
         if username == "" or username == "NONE":
             QMessageBox.question(self, 'Failed Registration', "Invalid Username")
             return

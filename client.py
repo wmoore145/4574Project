@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# client.py ECE4574 FA22 Appointment Scheduler Sam Stewart Nov. 28, 2022
+# This is the main file for the project
 import login
 import QTSearchWindow
 import businessWindow
@@ -9,6 +12,7 @@ from PyQt6.QtCore import pyqtSlot
 
 
 class App(QWidget):
+    #Inits all the windows
     def __init__(self):
         super(App, self).__init__()
 
@@ -45,16 +49,21 @@ class App(QWidget):
 
         self.show()
 
-    def initRegistrationPage(self): #REGISTRATION WINDOW
+    #REGISTRATION WINDOW
+    def initRegistrationPage(self): 
         layout = QFormLayout()
     
-        # Create textbox
+        # Create username textbox
         self.rusername = QLineEdit()
         layout.addRow("Username", self.rusername)
 
-        # Create textbox
+        # Create password textbox
         self.rpassword = QLineEdit()
         layout.addRow("Password", self.rpassword)
+
+        # Create address textbox
+        #self.raddress = QLineEdit()
+        #layout.addRow("Address", self.raddress)
 
         self.business_option = QCheckBox("Business?")
         layout.addRow("",self.business_option)
@@ -73,7 +82,8 @@ class App(QWidget):
 
         self.registrationwindow.setLayout(layout)
     
-    def initLoginPage(self): #LOGIN WINDOW
+    #LOGIN WINDOW
+    def initLoginPage(self): 
         layout = QFormLayout()
     
         # Create textbox
@@ -100,6 +110,7 @@ class App(QWidget):
 
         self.loginwindow.setLayout(layout)
 
+    #When login button clicked
     @pyqtSlot()
     def login_click(self):
         username = self.username.text()
@@ -115,16 +126,19 @@ class App(QWidget):
         else:
             QMessageBox.question(self, 'Failed Login', "Incorrect Username or Password Provided")
 
+    #When to registration page clicked on login
     @pyqtSlot()
     def registration_click(self):
         self.rusername.clear()
         self.rpassword.clear()
         self.Stack.setCurrentIndex(1)#switches page to register
 
+    #When on registration page and clicks register
     @pyqtSlot()
     def register_click(self):
         username = self.rusername.text()
         password = self.rpassword.text()
+        #address = self.raddress.text()
         business = self.business_option.isChecked()
         if username == "" or username == "NONE":
             QMessageBox.question(self, 'Failed Registration', "Invalid Username")
@@ -132,7 +146,7 @@ class App(QWidget):
         account_type = 'private'
         if business:
             account_type = 'business'
-        if login.register(username, password, account_type):
+        if login.register(username, password, account_type):#, address):
             self.username_text = username
             if business:
                 self.businesswindow.loginRefresh()
@@ -143,11 +157,13 @@ class App(QWidget):
         else:
             QMessageBox.question(self, 'Failed Registration', "Username Already Taken")
 
+    #When clicks return to login
     @pyqtSlot()
     def to_login(self):
         self.password.clear()
         self.Stack.setCurrentIndex(0)#switches page to login
 
+#Starts up app and goes
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = App()

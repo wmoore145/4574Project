@@ -1,4 +1,5 @@
-
+# businessWindow.py ECE4574 FA22 Appointment Scheduler Sam Stewart Nov. 28, 2022
+# This handles the business' window and all that can happen on it
 import PyQt6
 import sys
 from pymongo import MongoClient
@@ -9,6 +10,7 @@ from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLineEdit, QHBox
 
 class BusinessWindow(QWidget):
 
+    #Switches to view window
     def viewAll(self):
         #needs to view all of the appointments the buisness has
         query = self.col.find({"business": self.client.username_text})
@@ -16,12 +18,13 @@ class BusinessWindow(QWidget):
         pos = self.client.Stack.addWidget (self.appointment_window)
         self.client.Stack.setCurrentIndex(pos)#switches page to view appointments
 
+    #Creates an appointment
     def creation(self):
-        #needs to take this start and end times and create an appointment slot
         self.col.insert_one({"business": self.client.username_text, "start_time": self.createStartEntry.text(), "end_time": self.createEndEntry.text(), "apointee": "NONE"})
         self.createStartEntry.clear()
         self.createEndEntry.clear()
 
+    #Deletes an appointment
     def cancelation(self):
         #takes this start time and cancels the appointment with that start
         try:
@@ -35,16 +38,18 @@ class BusinessWindow(QWidget):
         self.col.delete_one({'_id': ObjectId(self.cancelStartEntry.text())})
         self.cancelStartEntry.clear()
 
+    #When returning to this window cleans up appointmnet viewing window for next time
     def endViewAll(self):
-        #when returning to this window cleans up appointmnet viewing window for next time
         self.client.Stack.setCurrentIndex(3)
         self.client.Stack.removeWidget(self.appointment_window)#removes widget to view appointments
         self.appointment_window.deleteLater()
         self.appointment_window = None
 
+    ##Refreshes details and page upon being sent to this page, used to keep different user's data from staying for current user's login
     def loginRefresh(self):
         self.cancelStartEntry.clear()
 
+    #Initializes the business window
     def __init__(self, client):
         super(BusinessWindow, self).__init__()
         self.mongo_client = MongoClient('mongodb://localhost:27017')#assuming local database
@@ -121,7 +126,7 @@ if __name__ == "__main__":
 
     sys.exit(app.exec())
 
-
+#View Window Class, For Viewing Appointments
 class ViewAppointmentsBusiness(QWidget):
 
     def __init__(self, parent, query):

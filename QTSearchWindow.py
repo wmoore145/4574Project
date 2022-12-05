@@ -1,3 +1,5 @@
+# QTSearchWIndow.py ECE4574 FA22 Appointment Scheduler Sam Stewart Nov. 28, 2022
+# This handles the customer's window and all that can happen on it
 from msilib.schema import AppSearch
 import sys
 import appSearch
@@ -12,13 +14,15 @@ from PyQt6.QtCore import pyqtSlot
 
 class SearchWidget(QWidget):    #Search Window
 
-    def concatBiz(self): #Take the list of buisnesses that are needed and convert them to a string
+    #Take the list of buisnesses that are needed and convert them to a string
+    def concatBiz(self): 
         buisnesses = ""
         for string in  self.biz:
             buisnesses = buisnesses + string + " "
 
         return buisnesses
 
+    #Adds a business to the display of selected businesses
     def BizAdd(self):
 
         currentBiz = self.BusinessBox.currentText()
@@ -33,9 +37,8 @@ class SearchWidget(QWidget):    #Search Window
         fullMessage = message + bizneeded
         self.messageBox.setText(fullMessage)     
 
-
+    #Cancels an appointment
     def cancelation(self):
-        #takes this start time and cancels the appointment with that start
         try:
             self.col.update_one({'_id': ObjectId(self.cancelStartEntry.text())},{'$set': {'apointee': "NONE"}}, upsert=False)
         except:
@@ -43,27 +46,18 @@ class SearchWidget(QWidget):    #Search Window
             return
         self.cancelStartEntry.clear()
        
-
-
-
+    #Runs search algorithm for appointments and formats response
     def findResult(self):
-        #go get the result from what you need
         result = appSearch.search( self.biz, self)
-        #print("precopy")
         self.toBook = result.copy()
-        #print("postcopy")
-        #keys = list(self.toBook.keys())
-        #print(keys)
-        #values = list(self.toBook.values())
-        #print(values)
 
         resultStr = ""
         
         for appmnt in result:
 
-            resultStr += appmnt[0]#str(key) 
+            resultStr += appmnt[0]
             resultStr += ": " 
-            resultStr += str(appmnt[1])#str(value) 
+            resultStr += str(appmnt[1])
             resultStr += " - "
             resultStr += str(appmnt[2])
             resultStr += "\n"
@@ -73,6 +67,7 @@ class SearchWidget(QWidget):    #Search Window
 
         self.resultBox.setText(resultStr)
 
+    #Refreshes details and page upon being sent to this page, used to keep different user's data from staying for current user's login
     def loginRefresh(self):
         query = self.col.find({})
         for appointment in query:
@@ -90,16 +85,13 @@ class SearchWidget(QWidget):    #Search Window
         self.biz = []
         self.messageBox.setText("Buisnesses Selected: ")
 
-
-
-
+    #Initializes the client's window
     def __init__(self, client):
         
         QWidget.__init__(self)
         self.mongo_client = MongoClient('mongodb://localhost:27017')#assuming local database
         self.col  = self.mongo_client["appointment_user_data"]["appointment_list"]#database user_data and collection appointment_list
         self.client = client
-        #self.toBook = OrderedDict()
         self.toBook = []
         self.biz = []
         self.messageBox = QLabel()
@@ -107,15 +99,9 @@ class SearchWidget(QWidget):    #Search Window
 
         # Instructions
         self.businessList = []
-        #query = self.col.find({})
-        #for appointment in query:
-        #    if appointment["business"] not in self.businessList:
-        #        self.businessList.append(appointment["business"])
 
         #DropBox
         self.BusinessBox = QComboBox()
-        #for name in self.businessList:
-        #    self.BusinessBox.addItem(name)
 
         addButton = QPushButton(self)
         addButton.setText("Add/Remove")
@@ -165,10 +151,6 @@ class SearchWidget(QWidget):    #Search Window
 
         viewButton.clicked.connect(self.viewAppointments)
 
-        #finalLayout = QHBoxLayout()
-        #finalLayout.addWidget(viewButton)
-        #finalLayout.addWidget(cancelButton)
-
         # Logout Button
         self.logoutButton = QPushButton("Logout")
         self.logoutButton.clicked.connect(self.client.to_login)
@@ -193,29 +175,27 @@ class SearchWidget(QWidget):    #Search Window
         self.setLayout(self.layout)  
         self.show()
 
-        
+    #Marks each selected appointment as taken
     @pyqtSlot()
     def bookAppointment(self):
-        #marks each appointment as taken
+        
         for apointment in self.toBook:
             self.col.update_one({'_id': ObjectId(apointment[3])},{'$set': {'apointee': self.client.username_text}}, upsert=False)
         
-
+    #When returning to this window cleans up appointmnet viewing window for next time
     def endViewAll(self):
-        #when returning to this window cleans up appointmnet viewing window for next time
         self.client.Stack.setCurrentIndex(2)
         self.client.Stack.removeWidget(self.appointment_window)#removes widget to view appointments
         self.appointment_window.deleteLater()
         self.appointment_window = None
 
+    #Opens viewing window to see customer's appointments
     @pyqtSlot()
     def viewAppointments(self):
         query = self.col.find({"apointee": self.client.username_text})
         self.appointment_window = ViewAppointmentsPrivate(self, query)
         pos = self.client.Stack.addWidget (self.appointment_window)
         self.client.Stack.setCurrentIndex(pos)#switches page to view appointments
-        
-        #Message box with viewed appointments
         
 
 
@@ -228,6 +208,7 @@ if __name__ == "__main__":
     sys.exit(app.exec())
 
 
+#View Window Class, For Viewing Appointments
 class ViewAppointmentsPrivate(QWidget):
 
     def __init__(self, parent, query):

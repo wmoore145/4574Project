@@ -13,7 +13,7 @@ def getTravelTime(origin_lat,origin_long,final_lat,final_long):
     url = "http://maps.googleapis.com/maps/api/distancematrix/json?origins={0}&destinations={1}&mode=driving&language=en-EN&sensor=false&key={2}".format(str(origin),str(finaldest),api_key)
     result= simplejson.load(urllib.urlopen(url))
     driving_time = result['rows'][0]['elements'][0]['duration']['value']
-    return driving_time # returns  # hours # min or #min
+    return driving_time # returns  # Returns Value in seconds. for minutes divide driving_time by 60
 
 # search function given all the appointments, the buisneses needed, the start time, and current route
 # this is based off an AI Project I did
@@ -61,14 +61,46 @@ def search(biz, window):
 
     query = window.col.find({"apointee": "NONE"})
 
-    
+    #biz_lists = []
+    #for business in biz:
+        #biz_lists.append([])#biz_lists length
+
     for appointment in query:
         allApps.append([appointment["business"], float(appointment["start_time"]), float(appointment["end_time"]), str(appointment["_id"])])
+        #i = 0
+        #for business in biz:
+        #    if business == appointment["business"]:
+        #        biz_lists[i].append([appointment["business"], float(appointment["start_time"]), float(appointment["end_time"]), str(appointment["_id"])])
+        #    i += 1
+
+
         #if appointment["business"] not in allApps.keys():
         #    allApps[appointment["business"]] = []
         #allApps[appointment["business"]].append([str(appointment["_id"]), int(appointment["start_time"]), int(appointment["end_time"])])
 
+
+    #allPerms = permutations(biz_lists)
     
+    #final_order = []
+    #for order in allPerms:
+        #print(order)
+        '''starttime = float(window.searchStartEntry.text())
+        endtime = float(window.searchEndEntry.text())
+        current_order = []
+        for item in order:
+            if item[0] in biz and item[1] >= starttime and item[2] <= endtime and item not in current_order:
+                current_order.append(item)
+                starttime = item[2]
+
+        #time here
+
+        if len(current_order) > len(final_order) or len(current_order) == 0:
+            final_order = current_order
+            continue
+        if (len(current_order) == len(final_order)) and (current_order[-1][2] - current_order[0][1] < final_order[-1][2] - final_order[0][1]):
+            final_order = current_order'''
+
+
 
     allLists = permutations(allApps)  # finds all possible combinations of appointments
     final_order = []
@@ -77,7 +109,11 @@ def search(biz, window):
         endtime = float(window.searchEndEntry.text())
         current_order = []
         for item in order:
-            if item[0] in biz and item[1] >= starttime and item[2] <= endtime and item not in current_order:
+            already_listed_business = False
+            for listed_item in current_order:
+                if item[0] == listed_item[0]:#if business in current item already in booked_items
+                    already_listed_business = True
+            if item[0] in biz and item[1] >= starttime and item[2] <= endtime and not already_listed_business:
                 current_order.append(item)
                 starttime = item[2]
 

@@ -13,7 +13,7 @@ def getTravelTime(origin_lat,origin_long,final_lat,final_long):
     url = "http://maps.googleapis.com/maps/api/distancematrix/json?origins={0}&destinations={1}&mode=driving&language=en-EN&sensor=false&key={2}".format(str(origin),str(finaldest),api_key)
     result= simplejson.load(urllib.urlopen(url))
     driving_time = result['rows'][0]['elements'][0]['duration']['value']
-    return driving_time # returns  # hours # min or #min
+    return driving_time # returns  # Returns Value in seconds. for minutes divide driving_time by 60
 
 # search function given all the appointments, the buisneses needed, the start time, and current route
 # this is based off an AI Project I did

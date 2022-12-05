@@ -52,10 +52,10 @@ def getTravelTime(origin_lat,origin_long,final_lat,final_long):
         
 
 def search(biz, window):
-    print("Entered succesful")
-    route = OrderedDict() #using an ordered dictionary for the route
-    best_route = OrderedDict() # best route to take
-    bestEnd = 10000     #high best end time so it only gets smaller, should be after appointmets stop
+    #print("Entered succesful")
+    #route = OrderedDict() #using an ordered dictionary for the route
+    #best_route = OrderedDict() # best route to take
+    #bestEnd = 10000     #high best end time so it only gets smaller, should be after appointmets stop
     allApps = []
     #allApps = {}
 
@@ -69,7 +69,7 @@ def search(biz, window):
         #allApps[appointment["business"]].append([str(appointment["_id"]), int(appointment["start_time"]), int(appointment["end_time"])])
 
     
-    
+
     allLists = permutations(allApps)  # finds all possible combinations of appointments
     final_order = []
     for order in allLists:
@@ -100,7 +100,7 @@ def search(biz, window):
         if len(current_order) > len(final_order) or len(current_order) == 0:
             final_order = current_order
             continue
-        if current_order[-1][2] - current_order[0][1] < final_order[-1][2] - final_order[0][1]:
+        if (len(current_order) == len(final_order)) and (current_order[-1][2] - current_order[0][1] < final_order[-1][2] - final_order[0][1]):
             final_order = current_order
         
     #print(final_order)

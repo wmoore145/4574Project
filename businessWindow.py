@@ -4,9 +4,7 @@ import sys
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
-from PyQt6.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QLineEdit, QMessageBox, QStackedWidget, QListWidget, QFormLayout, QHBoxLayout, QVBoxLayout, QRadioButton, QLabel, QCheckBox
-from PyQt6.QtGui import QIcon
-from PyQt6.QtCore import pyqtSlot
+from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLineEdit, QHBoxLayout, QVBoxLayout, QLabel
 
 
 class BusinessWindow(QWidget):
@@ -14,7 +12,7 @@ class BusinessWindow(QWidget):
     def viewAll(self):
         #needs to view all of the appointments the buisness has
         query = self.col.find({"business": self.client.username_text})
-        self.appointment_window = ViewAppointments(self, query)
+        self.appointment_window = ViewAppointmentsBusiness(self, query)
         pos = self.client.Stack.addWidget (self.appointment_window)
         self.client.Stack.setCurrentIndex(pos)#switches page to view appointments
 
@@ -39,6 +37,7 @@ class BusinessWindow(QWidget):
 
     def endViewAll(self):
         #when returning to this window cleans up appointmnet viewing window for next time
+        self.client.Stack.setCurrentIndex(3)
         self.client.Stack.removeWidget(self.appointment_window)#removes widget to view appointments
         self.appointment_window.deleteLater()
         self.appointment_window = None
@@ -123,10 +122,10 @@ if __name__ == "__main__":
     sys.exit(app.exec())
 
 
-class ViewAppointments(QWidget):
+class ViewAppointmentsBusiness(QWidget):
 
     def __init__(self, parent, query):
-        super(ViewAppointments, self).__init__()
+        super(ViewAppointmentsBusiness, self).__init__()
         self.layout = QVBoxLayout()
         for appointment in query:
             info = QLabel("Start Time: " + str(appointment["start_time"]) + "   End Time: " + str(appointment["end_time"]) + "   Apointee: " + str(appointment["apointee"]) + "   ID: " + str(appointment["_id"]))

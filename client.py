@@ -2,11 +2,8 @@ import login
 import QTSearchWindow
 import businessWindow
 
-import PyQt6
-
 import sys
-from PyQt6.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QLineEdit, QMessageBox, QStackedWidget, QListWidget, QFormLayout, QHBoxLayout, QRadioButton, QLabel, QCheckBox
-from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLineEdit, QMessageBox, QStackedWidget, QFormLayout, QHBoxLayout, QCheckBox
 from PyQt6.QtCore import pyqtSlot
 
 
@@ -23,8 +20,6 @@ class App(QWidget):
         self.initRegistrationPage()
     
         
-#TO ADD NEW WINDOWS ADD HERE WITH 'self.YOURWIDGETNAME' AND YOUR WIDGET'S CONSTRUCTOR, THEN 'self.Stack.addWidget (self.YOURWIDGETNAME)' TO END OF LIST BELOW, KEEP IN MIND ITS INDEX
-
         self.Stack = QStackedWidget(self)
         self.Stack.addWidget (self.loginwindow)#index 0
         self.Stack.addWidget (self.registrationwindow)#index 1
@@ -33,7 +28,6 @@ class App(QWidget):
         self.businesswindow = businessWindow.BusinessWindow(self)
         self.Stack.addWidget (self.businesswindow)#index 3
 
-#FOR NAVIGATION ADD BUTTON THAT CALLS self.Stack.setCurrentIndex(YOUR_DESIRED_INDEX)
 
         hbox = QHBoxLayout(self)
         hbox.addWidget(self.Stack)

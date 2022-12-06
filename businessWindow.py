@@ -1,5 +1,7 @@
-# businessWindow.py ECE4574 FA22 Appointment Scheduler Sam Stewart Nov. 28, 2022
-# This handles the business' window and all that can happen on it
+# businessWindow.py
+# ECE4574 FA22 Appointment Scheduler Nov. 28, 2022
+# Sam Stewart, William Moore
+# This handles the business' window view and all functionality
 import PyQt6
 import sys
 from pymongo import MongoClient
@@ -64,8 +66,8 @@ class BusinessWindow(QWidget):
         self.setGeometry(self.left, self.top, self.width, self.height)
 
         #### Setting welcome message
-        name = "Buisness Name"
-        fullName = "<h1>Welcome " + name + "</h1>"
+        
+        fullName = "<h1>Welcome</h1>"
         self.name =  QLabel(fullName)
 
         ######## Setting the creation layout

@@ -1,5 +1,7 @@
-# QTSearchWIndow.py ECE4574 FA22 Appointment Scheduler Sam Stewart Nov. 28, 2022
-# This handles the customer's window and all that can happen on it
+# QTSearchWIndow.py 
+# ECE4574 FA22 Appointment Scheduler Nov. 28, 2022
+# Sam Stewart, William Moore
+# This handles the customer's window view and functionality
 from msilib.schema import AppSearch
 import sys
 import appSearch

@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-# client.py ECE4574 FA22 Appointment Scheduler Sam Stewart Nov. 28, 2022
-# This is the main file for the project
+# client.py
+# ECE4574 FA22 Appointment Scheduler Nov. 28, 2022
+# Sam Stewart
+# This is the main startup file for the project
 import login
 import QTSearchWindow
 import businessWindow

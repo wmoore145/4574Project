@@ -1,4 +1,6 @@
-# appSearch.py ECE4574 FA22 Appointment Scheduler Sam Stewart Nov. 28, 2022
+# appSearch.py
+# ECE4574 FA22 Appointment Scheduler Nov. 28, 2022
+# Sam Stewart, William Moore
 # Search through appointments on a given day, returns the best order of appointments to go in
 from itertools import permutations
 import json as simplejson
@@ -39,6 +41,9 @@ def search(biz, window):
             if item[0] in biz and item[1] >= starttime and item[2] <= endtime and not already_listed_business:
                 current_order.append(item)
                 starttime = item[2]
+
+        #Below is the commented out travel time functionality
+        #is commented out because we were approaching the free trial limit 
 
         #travel_time_possible = True
         #for item_loc in range(len(current_order)):

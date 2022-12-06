@@ -1,4 +1,6 @@
-# login.py ECE4574 FA22 Appointment Scheduler Sam Stewart Nov. 28, 2022
+# login.py
+# ECE4574 FA22 Appointment Scheduler Nov. 28, 2022
+# Sam Stewart
 # This handles login details/registration database communications
 from pymongo import MongoClient
 import json as simplejson

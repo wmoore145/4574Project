@@ -1,6 +1,6 @@
 # appSearch.py
 # ECE4574 FA22 Appointment Scheduler Nov. 28, 2022
-# Sam Stewart, William Moore
+# Sam Stewart, William Moore, Kevin Vo
 # Search through appointments on a given day, returns the best order of appointments to go in
 from itertools import permutations
 import json as simplejson
